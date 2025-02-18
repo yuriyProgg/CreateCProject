@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-O3
+FLAGS=-w -O3
 
 TARGET=ccp
 SOURCES=$(wildcard *.c)
