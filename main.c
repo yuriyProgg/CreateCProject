@@ -3,6 +3,11 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#ifdef __MINGW32__
+#include <direct.h>
+#define mkdir(path, mode) _mkdir(path)
+#endif
+
 char create_cmake_project(char *project_name, char is_cpp, char *std);
 char create_make_project(char *project_name, char is_cpp, char *std);
 
