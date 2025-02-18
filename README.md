@@ -8,7 +8,15 @@ cd CreateCProject
 make
 ```
 
-Добавте папку в PATH
+### С загрузкой
+Скачайте файл [по ссылке](https://github.com/yuriyProgg/CreateCProject/releases/tag/v1.0.0)
+- Для Windows: windows_ccp.exe
+- Для Linux: linux_ccp
+
+Рекомендация:
+- Переменуйте файл в ccp
+
+**Добавте папку с приложением в PATH**
 
 ## Использование
 ### Для Windows
