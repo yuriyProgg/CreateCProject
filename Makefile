@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 FLAGS=-O3
 
 TARGET=ccp
