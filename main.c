@@ -13,17 +13,16 @@
 char create_cmake_project(char *project_name, char is_cpp, char *std);
 char create_make_project(char *project_name, char is_cpp, char *std);
 char create_json_config(char *folder_path[256], char is_cpp);
-char new_module();
+char new_module(char module_name[64]);
 char directory_exists(const char *path);
 
 int main(int argc, char *argv[])
 {
-  // Проверка на количество аргументов
   if (argc <= 1 || !strncmp(argv[1], "-h", 2) || !strncmp(argv[1], "--help", 6))
   {
     printf("Используете `%s <Имя проекта или Команда> [Флаги]`.\n", argv[0]);
     puts("\nКоманды:");
-    puts("  mod\t\t\tСоздать новый модуль (если в проекте есть папки src и include).");
+    puts("  mod <Имя модуля>\tСоздать новый модуль (если в проекте есть папки src и include).");
     puts("\nФлаги:");
     puts("  -cpp\t\t\tИспользовать C++. По умолчанию используется C.");
     puts("  -std=<ЗНАЧЕНИЕ>\tСтандарт С\\С++. По умолчанию 23.");
@@ -31,10 +30,13 @@ int main(int argc, char *argv[])
     puts("  -h, --help\t\tПоказать этот текст.");
     return 1;
   }
-  else if (!strncmp(argv[1], "mod", 3))
+
+  if (argc >= 2 && !strncmp(argv[1], "mod", 3))
   {
-    char result = new_module();
-    if (result == 2)
+    char result = new_module(argv[2]);
+    if (result == 0)
+      printf("Модуль \"%s\" успешно создан.\n", argv[2]);
+    else if (result == 2)
       printf("Ошибка создания файла\n");
     else if (result != 0)
       printf("Ошибка №%d\n", result);
@@ -56,7 +58,7 @@ int main(int argc, char *argv[])
   }
 
   // Создаем проект
-  char result = strncmp(tool, "make", 4) ? create_make_project(project_name, is_cpp, standart) : create_cmake_project(project_name, is_cpp, standart);
+  char result = !strncmp(tool, "make", 4) ? create_make_project(project_name, is_cpp, standart) : create_cmake_project(project_name, is_cpp, standart);
   if (result == 2)
     printf("Ошибка создания файла\n");
   else if (result != 0)
@@ -206,6 +208,7 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
 
   fclose(file);
+  create_json_config(folder_path, is_cpp);
   return 0;
 }
 
@@ -232,7 +235,7 @@ char create_json_config(char *folder_path[256], char is_cpp)
   return 0;
 }
 
-char new_module()
+char new_module(char module_name[64])
 {
   char cwd[256];
   getcwd(cwd, 256); // получить текущую рабочую директорию
@@ -243,8 +246,8 @@ char new_module()
   if (!config_file)
     return 2;
 
-  char buffer[256];
-  fread(buffer, 1, sizeof(buffer), json_path);
+  char buffer[512];
+  fread(buffer, 1, sizeof(buffer), config_file);
   fclose(config_file);
 
   cJSON *json = cJSON_Parse(buffer);
@@ -254,7 +257,7 @@ char new_module()
     return 2;
   }
   cJSON *language = cJSON_GetObjectItem(json, "language");
-  if (cJSON_IsString(language) && !language->valuestring)
+  if (cJSON_IsString(language) && language->valuestring)
   {
     char include_path[256], src_path[256];
     sprintf(include_path, "%s/include", cwd);
@@ -266,10 +269,6 @@ char new_module()
       printf("Нет в текущем каталоге папок src и include.\n");
       return 3;
     }
-
-    char module_name[64];
-    printf("Введите имя модуля: ");
-    scanf("%s", module_name);
 
     if (!strncmp(language->valuestring, "cpp", 3))
     {
