@@ -208,7 +208,6 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
 
   fclose(file);
-  create_json_config(folder_path, is_cpp);
   return 0;
 }
 
