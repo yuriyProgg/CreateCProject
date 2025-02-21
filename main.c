@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include "cJSON.h"
+
 #ifdef __MINGW32__
 #include <direct.h>
 #define mkdir(path, mode) _mkdir(path)
@@ -10,6 +12,7 @@
 
 char create_cmake_project(char *project_name, char is_cpp, char *std);
 char create_make_project(char *project_name, char is_cpp, char *std);
+char create_json_config(char *folder_path[256], char is_cpp);
 
 int main(int argc, char *argv[])
 {
@@ -106,6 +109,10 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
     fprintf(file, "#include <stdio.h>\n\nint main()\n{\n  printf(\"Hello, World!\");\n  return 0;\n}\n");
   }
   fclose(file);
+  // Возращаем папку в корень
+  sprintf(folder_path, "%s/%s", cwd, project_name);
+
+  create_json_config(folder_path, is_cpp);
   return 0;
 }
 
@@ -181,5 +188,28 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
 
   fclose(file);
+  return 0;
+}
+
+char create_json_config(char *folder_path[256], char is_cpp)
+{
+  cJSON *root = cJSON_CreateObject();
+  if (is_cpp)
+    cJSON_AddStringToObject(root, "language", "cpp");
+  else
+    cJSON_AddStringToObject(root, "language", "c");
+
+  char json_path[256];
+  sprintf(json_path, "%s/ccp.json", folder_path);
+  FILE *file = fopen(json_path, "w");
+  if (!file) // Проверка на ошибку создания файла
+    return 2;
+
+  char *json_str = cJSON_Print(root);
+  fprintf(file, "%s", json_str);
+  fclose(file);
+
+  cJSON_Delete(root);
+  cJSON_free(json_str);
   return 0;
 }
