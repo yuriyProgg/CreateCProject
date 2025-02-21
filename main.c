@@ -21,13 +21,24 @@ int main(int argc, char *argv[])
   // Проверка на количество аргументов
   if (argc <= 1 || !strncmp(argv[1], "-h", 2) || !strncmp(argv[1], "--help", 6))
   {
-    printf("Используете `%s <Имя проекта> [Флаги]`.\n\n", argv[0]);
-    puts("Флаги:");
+    printf("Используете `%s <Имя проекта или Команда> [Флаги]`.\n", argv[0]);
+    puts("\nКоманды:");
+    puts("  mod\t\t\tСоздать новый модуль (если в проекте есть папки src и include).");
+    puts("\nФлаги:");
     puts("  -cpp\t\t\tИспользовать C++. По умолчанию используется C.");
     puts("  -std=<ЗНАЧЕНИЕ>\tСтандарт С\\С++. По умолчанию 23.");
     puts("  -cmake\t\tИспользовать CMake. По умолчанию используется Makefile.");
     puts("  -h, --help\t\tПоказать этот текст.");
     return 1;
+  }
+  else if (!strncmp(argv[1], "mod", 3))
+  {
+    char result = new_module();
+    if (result == 2)
+      printf("Ошибка создания файла\n");
+    else if (result != 0)
+      printf("Ошибка №%d\n", result);
+    return result;
   }
 
   // Иницилизация переменных
