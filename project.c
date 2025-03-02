@@ -1,5 +1,5 @@
 #include "project.h"
-
+#include "config.h"
 #include <stdio.h>
 
 #include "cJSON.h"
@@ -41,13 +41,15 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
 
     fprintf(file, "set(CMAKE_CXX_STANDARD %s)\n", std);
     fprintf(file, "set(CMAKE_CXX_STANDARD_REQUIRED ON)\n");
-    fprintf(file, "add_executable(${PROJECT_NAME} src/main.cpp)\n");
+    fprintf(file, "set(SOURCES src/main.cpp)\n");
+    fprintf(file, "add_executable(${PROJECT_NAME} ${SOURCES})\n");
   }
   else
   {
     fprintf(file, "set(CMAKE_C_STANDARD %s)\n", std);
     fprintf(file, "set(CMAKE_C_STANDARD_REQUIRED ON)\n");
-    fprintf(file, "add_executable(${PROJECT_NAME} src/main.c)\n");
+    fprintf(file, "set(SOURCES src/main.c)\n");
+    fprintf(file, "add_executable(${PROJECT_NAME} ${SOURCES})\n");
   }
   fprintf(file, "target_include_directories(${PROJECT_NAME} PRIVATE include)\n");
   fclose(file);
@@ -75,7 +77,7 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
   // Возращаем папку в корень
   sprintf(folder_path, "%s/%s", cwd, project_name);
 
-  create_json_config(folder_path, is_cpp);
+  create_json_config(folder_path, is_cpp, "include/", "src/");
   return 0;
 }
 
@@ -151,5 +153,6 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
 
   fclose(file);
+  create_json_config(folder_path, is_cpp, "", "");
   return 0;
 }
