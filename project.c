@@ -77,7 +77,7 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
   // Возращаем папку в корень
   sprintf(folder_path, "%s/%s", cwd, project_name);
 
-  create_json_config(folder_path, is_cpp, "include/", "src/");
+  create_json_config(folder_path, is_cpp, "include", "src");
   return 0;
 }
 
