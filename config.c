@@ -23,15 +23,15 @@ char directory_exists(const char *path)
   }
 }
 
-char create_json_config(char *folder_path[256], char is_cpp, char *include_path, char *src_path)
+char create_json_config(char *folder_path[256], char is_cpp, char *include_dir, char *src_dir)
 {
   cJSON *root = cJSON_CreateObject();
   if (is_cpp)
     cJSON_AddStringToObject(root, "language", "cpp");
   else
     cJSON_AddStringToObject(root, "language", "c");
-  cJSON_AddStringToObject(root, "include", include_path);
-  cJSON_AddStringToObject(root, "src", src_path);
+  cJSON_AddStringToObject(root, "include", include_dir);
+  cJSON_AddStringToObject(root, "src", src_dir);
 
   char json_path[256];
   sprintf(json_path, "%s/ccp.json", folder_path);
