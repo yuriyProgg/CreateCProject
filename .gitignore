@@ -1,4 +1,3 @@
 ccp
 ccp.exe
-main.o
-cJSON.o
+*.o
