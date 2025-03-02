@@ -2,6 +2,24 @@
 #include "cJSON.h"
 #include <stdio.h>
 
+void get_include_path(cJSON *json, char *path[256], char *cwd[256])
+{
+  cJSON *include_path = cJSON_GetObjectItem(json, "include");
+  if (cJSON_IsString(include_path) && include_path->valuestring != "")
+    sprintf(*path, "%s/%s", *cwd, include_path->valuestring);
+  else
+    sprintf(*path, "%s", *cwd);
+}
+
+void get_src_path(cJSON *json, char *path[256], char *cwd[256])
+{
+  cJSON *src_path = cJSON_GetObjectItem(json, "src");
+  if (cJSON_IsString(src_path) && src_path->valuestring != "")
+    sprintf(*path, "%s/%s", *cwd, src_path->valuestring);
+  else
+    sprintf(*path, "%s", *cwd);
+}
+
 char new_module(char module_name[64])
 {
   char cwd[256];
@@ -27,8 +45,8 @@ char new_module(char module_name[64])
   if (cJSON_IsString(language) && language->valuestring)
   {
     char include_path[256], src_path[256];
-    sprintf(include_path, "%s/include", cwd);
-    sprintf(src_path, "%s/src", cwd);
+    get_include_path(json, &include_path, &cwd);
+    get_src_path(json, &src_path, &cwd);
 
     if (!directory_exists(include_path) && !directory_exists(src_path))
     {
@@ -39,10 +57,9 @@ char new_module(char module_name[64])
 
     if (!strncmp(language->valuestring, "cpp", 3))
     {
-      char cpp_path[256];
-      char hpp_path[256];
-      sprintf(cpp_path, "%s/src/%s.cpp", cwd, module_name);
-      sprintf(hpp_path, "%s/include/%s.hpp", cwd, module_name);
+      char cpp_path[256], hpp_path[256];
+      sprintf(cpp_path, "%s/%s.cpp", src_path, module_name);
+      sprintf(hpp_path, "%s/%s.hpp", include_path, module_name);
       FILE *cpp_file = fopen(cpp_path, "w");
       FILE *hpp_file = fopen(hpp_path, "w");
       if (!cpp_file || !hpp_file)
@@ -56,10 +73,9 @@ char new_module(char module_name[64])
     }
     else
     {
-      char c_path[256];
-      char h_path[256];
-      sprintf(c_path, "%s/src/%s.c", cwd, module_name);
-      sprintf(h_path, "%s/include/%s.h", cwd, module_name);
+      char c_path[256], h_path[256];
+      sprintf(c_path, "%s/%s.c", src_path, module_name);
+      sprintf(h_path, "%s/%s.h", include_path, module_name);
       FILE *c_file = fopen(c_path, "w");
       FILE *h_file = fopen(h_path, "w");
       if (!c_file || !h_file)
