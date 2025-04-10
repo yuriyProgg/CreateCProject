@@ -51,7 +51,7 @@ char new_module(const char *module_name)
     return 2;
   }
 
-  char json_path[256];
+  char json_path[512];
   snprintf(json_path, sizeof(json_path), "%s/ccp.json", cwd);
 
   FILE *config_file = fopen(json_path, "r");
@@ -77,7 +77,7 @@ char new_module(const char *module_name)
   if (cJSON_IsString(language) && language->valuestring != NULL)
   {
     char *include_dir = NULL;
-    char include_path[256];
+    char include_path[257];
     get_include_dir(buffer, &include_dir);
     if (include_dir)
     {
@@ -92,7 +92,7 @@ char new_module(const char *module_name)
     }
 
     char *src_dir = NULL;
-    char src_path[256];
+    char src_path[257];
     get_src_dir(buffer, &src_dir);
     if (src_dir)
     {
@@ -115,7 +115,7 @@ char new_module(const char *module_name)
 
     if (strcmp(language->valuestring, "cpp") == 0)
     {
-      char cpp_path[256], hpp_path[256];
+      char cpp_path[512], hpp_path[512];
       snprintf(cpp_path, sizeof(cpp_path), "%s/%s.cpp", src_path, module_name);
       snprintf(hpp_path, sizeof(hpp_path), "%s/%s.hpp", include_path, module_name);
 
@@ -136,7 +136,7 @@ char new_module(const char *module_name)
     }
     else
     {
-      char c_path[256], h_path[256];
+      char c_path[512], h_path[512];
       snprintf(c_path, sizeof(c_path), "%s/%s.c", src_path, module_name);
       snprintf(h_path, sizeof(h_path), "%s/%s.h", include_path, module_name);
 
