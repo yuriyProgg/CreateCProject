@@ -1,6 +1,8 @@
 #include "project.h"
 #include "config.h"
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include "cJSON.h"
 
@@ -10,24 +12,24 @@
 #endif
 
 // Создает проект на CMake
-char create_cmake_project(char *project_name, char is_cpp, char *std)
+char create_cmake_project(char project_name[128], char is_cpp, char *std)
 {
   char cwd[256];
   getcwd(cwd, 256); // получить текущую рабочую директорию
 
   // создать папку
-  char folder_path[256];
-  sprintf(folder_path, "%s/%s", cwd, project_name);
+  char folder_path[512];
+  snprintf(folder_path, sizeof(folder_path), "%s/%s", cwd, project_name);
   mkdir(folder_path, 0777);
-  sprintf(folder_path, "%s/%s/src", cwd, project_name);
+  snprintf(folder_path, sizeof(folder_path), "%s/%s/src", cwd, project_name);
   mkdir(folder_path, 0777);
-  sprintf(folder_path, "%s/%s/include", cwd, project_name);
+  snprintf(folder_path, sizeof(folder_path), "%s/%s/include", cwd, project_name);
   mkdir(folder_path, 0777);
   // Возращаем папку в корень
-  sprintf(folder_path, "%s/%s", cwd, project_name);
+  snprintf(folder_path, sizeof(folder_path), "%s/%s", cwd, project_name);
 
   // создать файл CMakeLists.txt
-  char cmakefile_path[256];
+  char cmakefile_path[530];
   sprintf(cmakefile_path, "%s/CMakeLists.txt", folder_path);
   FILE *file = fopen(cmakefile_path, "w");
 
@@ -57,7 +59,7 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
   // создать файл main.cpp
   if (is_cpp)
   {
-    char cppfile_path[255];
+    char cppfile_path[528];
     sprintf(cppfile_path, "%s/src/main.cpp", folder_path);
     file = fopen(cppfile_path, "w");
     if (!file) // Проверка на ошибку создания файла
@@ -66,8 +68,8 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
   }
   else
   {
-    char cfile_path[255];
-    sprintf(cfile_path, "%s/src/main.c", folder_path);
+    char cfile_path[526];
+    snprintf(cfile_path, sizeof(cfile_path), "%s/src/main.c", folder_path);
     file = fopen(cfile_path, "w");
     if (!file) // Проверка на ошибку создания файла
       return 2;
@@ -82,18 +84,18 @@ char create_cmake_project(char *project_name, char is_cpp, char *std)
 }
 
 // Создает проект на Makefile
-char create_make_project(char *project_name, char is_cpp, char *std)
+char create_make_project(char project_name[128], char is_cpp, char *std)
 {
   char cwd[256];
   getcwd(cwd, 256); // получить текущую рабочую директорию
 
   // Cоздаем папку
-  char folder_path[256];
+  char folder_path[257];
   sprintf(folder_path, "%s/%s", cwd, project_name);
   mkdir(folder_path, 0777);
 
   // Создаем Makefile
-  char makefile_path[256];
+  char makefile_path[268];
   sprintf(makefile_path, "%s/Makefile", folder_path);
   FILE *file = fopen(makefile_path, "w");
 
@@ -135,7 +137,7 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   // Создание С\С++ файла
   if (is_cpp)
   {
-    char cppfile_path[255];
+    char cppfile_path[268];
     sprintf(cppfile_path, "%s/main.cpp", folder_path);
     file = fopen(cppfile_path, "w");
     if (!file) // Проверка на ошибку создания файла
@@ -144,7 +146,7 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
   else
   {
-    char cfile_path[255];
+    char cfile_path[266];
     sprintf(cfile_path, "%s/main.c", folder_path);
     file = fopen(cfile_path, "w");
     if (!file) // Проверка на ошибку создания файла
@@ -153,6 +155,7 @@ char create_make_project(char *project_name, char is_cpp, char *std)
   }
 
   fclose(file);
+  sprintf(folder_path, "%s/%s", cwd, project_name);
   create_json_config(folder_path, is_cpp, "", "");
   return 0;
 }
