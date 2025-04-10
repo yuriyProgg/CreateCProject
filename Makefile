@@ -1,5 +1,5 @@
 CC=gcc
-FLAGS=-w -O3
+FLAGS=-w -O2 -std=c23 -flto=auto -pie -s -DNDEBUG
 LDFLAGS=
 
 TARGET=ccp
