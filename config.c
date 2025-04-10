@@ -23,7 +23,7 @@ char directory_exists(const char *path)
   }
 }
 
-char create_json_config(char *folder_path[256], char is_cpp, char *include_dir, char *src_dir)
+char create_json_config(char *folder_path, char is_cpp, char *include_dir, char *src_dir)
 {
   cJSON *root = cJSON_CreateObject();
   if (is_cpp)
