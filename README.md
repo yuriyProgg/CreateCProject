@@ -1,9 +1,9 @@
 # CreateCProject
-### Менеджер по созданию С\С++ приложения
+### Менеджер по созданию С и С++ приложения
 
 ![image](screenshots/1.png)
 
-CreateCProject - это инструмент для создания С/С++ приложений.
+CreateCProject - это инструмент для создания С и С++ приложений.
 
 ## Лицензия
 
@@ -19,7 +19,7 @@ make
 ```
 
 ### С загрузкой
-Скачайте файл [по ссылке](https://github.com/yuriyProgg/CreateCProject/releases/tag/v1.0.0)
+Скачайте файл [по ссылке](https://github.com/yuriyProgg/CreateCProject/releases)
 - Для Windows: windows_ccp.exe
 - Для Linux: linux_ccp
 
