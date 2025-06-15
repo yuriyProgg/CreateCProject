@@ -1,26 +1,33 @@
-CC=gcc
-FLAGS=-w -O2 -std=c23 -flto=auto -pie -s -DNDEBUG
-LDFLAGS=
+CC = gcc
+FLAGS = -O2 -std=c23 -flto=auto -pie -s -DNDEBUG # Release mode
+# FLAGS = -g -Wall -Wextra -Wpedantic -std=c23 # Debug mode 
+LDFLAGS = -flto=auto -pie -s
 
-TARGET=ccp
-INCLUDES=-I.
-SOURCES=$(wildcard *.c)
-OBJECTS=$(SOURCES:.c=.o)
+TARGET = ccp
+INCLUDES = -Iinclude -Ilib
+SOURCES = $(wildcard src/*.c) $(wildcard lib/*.c)
+OBJECTS = $(SOURCES:src/%.c=build/%.o)
 
 # Проверка, используется ли MinGW
-ifneq ($(HOST),)
-    ifeq ($(findstring mingw, $(HOST)), mingw)
-        CC=x86_64-w64-mingw32-gcc
-        LDFLAGS+=-lmingw32 -lmsvcrt
+ifneq ($(OS),Windows_NT)
+    ifeq ($(findstring mingw,$(CC)),mingw)
+        LDFLAGS += -lmingw32 -lmsvcrt
     endif
+else
+    LDFLAGS += -static
 endif
-all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
+all: build/$(TARGET)
+
+build/$(TARGET): $(OBJECTS)
+	@mkdir -p $(@D)
 	$(CC) $(FLAGS) $(INCLUDES) -o $@ $^ $(LDFLAGS)
 
-%.o: %.c
-	$(CC) $(FLAGS) $(INCLUDES) -c $<
+build/%.o: src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(FLAGS) $(INCLUDES) -c $< -o $@
+
+.PHONY: clean
 
 clean:
-	rm -f $(OBJECTS) $(TARGET)
+	rm -rf build $(TARGET)
