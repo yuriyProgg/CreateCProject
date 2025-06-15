@@ -1,0 +1,5 @@
+{
+  "language": "c",
+  "include": "include",
+  "src": "src"
+}
